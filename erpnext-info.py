@@ -9,7 +9,7 @@ ALLOWED_ARGS = ["-h", "--help", "-j", "--json"]
 def check_path(files_path):
     if not files_path.endswith('/'):
         files_path += '/'
-    return files_path
+    return files_path + 'development/frappe-bench/sites/'
 
 def info(argv):
     args = argv[:-1]
@@ -32,7 +32,7 @@ def info(argv):
     files_path = check_path(argv[-1])
 
     try:
-        with open(files_path + 'development/frappe-bench/sites/apps.json') as f:
+        with open(files_path + 'apps.json') as f:
             json_apps = json.load(f)
     except FileNotFoundError:
         print('Bad path provided')
@@ -43,6 +43,14 @@ def info(argv):
         apps[app] = json_apps[app]["version"]
 
     res_array["apps"] = apps
+
+    sites = dict()
+    for dir in os.listdir(files_path):
+        dir_path = os.path.join(files_path, dir)
+        if os.path.isdir(dir_path) and 'site_config.json' in os.listdir(dir_path):
+            sites[dir] = dict()
+
+    res_array["sites"] = sites
 
     print(json.dumps(res_array, indent=4))
 
