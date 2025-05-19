@@ -2,8 +2,6 @@ import sys
 import json
 import os
 
-# print(sys.argv)
-
 ALLOWED_ARGS = ["-h", "--help", "-j", "--json"]
 
 def check_path(files_path):
@@ -11,8 +9,9 @@ def check_path(files_path):
         files_path += '/'
     return files_path + 'development/frappe-bench/sites/'
 
-def info(argv):
-    args = argv[:-1]
+if __name__ == 'erpnext_info':
+    argv = sys.argv[1:]
+    args = argv[1:-1]
 
     unallowed_arg = False
 
@@ -26,17 +25,18 @@ def info(argv):
             -j, --json: Outputs json in cli.
             -h, --help: This usage screen.
         '''.strip())
-        return
+        exit()
 
     res_array = dict()
-    files_path = check_path(argv[-1])
+    app_path = argv[-1]
+    files_path = check_path(app_path)
 
     try:
         with open(files_path + 'apps.json') as f:
             json_apps = json.load(f)
     except FileNotFoundError:
         print('Bad path provided')
-        return
+        exit()
 
     apps = dict()
     for app in json_apps:
@@ -53,5 +53,3 @@ def info(argv):
     res_array["sites"] = sites
 
     print(json.dumps(res_array, indent=4))
-
-info(sys.argv[1:])
