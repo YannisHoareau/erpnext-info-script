@@ -1,13 +1,7 @@
 import sys
 import json
-import os
 
 ALLOWED_ARGS = ["-h", "--help", "-j", "--json"]
-
-def check_path(files_path):
-    if not files_path.endswith('/'):
-        files_path += '/'
-    return files_path + 'development/frappe-bench/sites/'
 
 if __name__ == 'erpnext_info':
     argv = sys.argv[1:]
@@ -25,31 +19,31 @@ if __name__ == 'erpnext_info':
             -j, --json: Outputs json in cli.
             -h, --help: This usage screen.
         '''.strip())
-        exit()
+        # exit()
 
     res_array = dict()
     app_path = argv[-1]
-    files_path = check_path(app_path)
 
-    try:
-        with open(files_path + 'apps.json') as f:
-            json_apps = json.load(f)
-    except FileNotFoundError:
-        print('Bad path provided')
-        exit()
+    import frappe
+    from frappe import cint
 
-    apps = dict()
-    for app in json_apps:
-        apps[app] = json_apps[app]["version"]
+    res_sites = dict()
 
-    res_array["apps"] = apps
+    for site in sorted(frappe.utils.get_sites()):
+        res_sites[site] = dict()
+        frappe.init(site)
+        frappe.connect()
+        res_sites[site]["schduler"] = True if cint(frappe.db.get_single_value("System Settings", "enable_scheduler")) == 1 else False
+        res_sites[site]["maintenance"] = True if frappe.local.conf.maintenance_mode == 1 else False
 
-    sites = dict()
-    for dir in os.listdir(files_path):
-        dir_path = os.path.join(files_path, dir)
-        if os.path.isdir(dir_path) and 'site_config.json' in os.listdir(dir_path):
-            sites[dir] = dict()
+    res_array["sites"] = res_sites
 
-    res_array["sites"] = sites
+    res_apps = dict()
+
+    for app in sorted(frappe.get_installed_apps()):
+        res_apps[app] = dict()
+        res_apps[app]["version"] = frappe.get_module(app).__version__
+
+    res_array["apps"] = res_apps
 
     print(json.dumps(res_array, indent=4))
