@@ -54,14 +54,15 @@ if __name__ == '__main__':
 
 	bench_path = argv[-1]
 	old_cwd = os.getcwd()
-	path = os.path.join(bench_path, "sites")
-	os.chdir(os.path.join(bench_path, "sites"))
+	sites_path = os.path.join(bench_path, "sites")
+	os.chdir(sites_path)
 
-	create_info_dict(get_sites(), get_all_apps(with_internal_apps=False, sites_path=path))
+	create_info_dict(get_sites(), get_all_apps(with_internal_apps=False, sites_path=sites_path))
 
 	if print_json:
 		import json
-		print(json.dumps(res_array, indent=4))
+		print(json.dumps(res_array, indent=2))
+		os.chdir(old_cwd)
 		exit(0)
 
 	os.chdir(old_cwd)
