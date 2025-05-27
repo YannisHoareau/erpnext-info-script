@@ -67,3 +67,10 @@ if __name__ == '__main__':
 
 	os.chdir(old_cwd)
 	exit()
+elif __name__ == 'erpnext_info':
+	try:
+		import frappe
+	except ImportError:
+		exit(1)
+	global sites, apps
+	create_info_dict(sites, apps)
