@@ -16,4 +16,6 @@ Use [-j, --json] option to output a dict in cli :
         }
     }
 
-Command example : /path/to/bench/env/bin/python erpnext_info.py -j /path/to/bench
+Command example : 
+
+    /path/to/bench/env/bin/python erpnext_info.py -j /path/to/bench
