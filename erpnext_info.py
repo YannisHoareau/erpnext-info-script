@@ -2,6 +2,15 @@ import sys
 
 ALLOWED_ARGS = ["-h", "--help", "-j", "--json"]
 
+"""
+Creates the info dict containing :
+	- sites :{site_name : [scheduler, maintenance, url]}
+	- apps : {name : version}
+
+It can be used :
+	- from CLI
+	- imported from another python script
+"""
 def create_info_dict(site_list, app_list):
 	res = dict()
 	res_sites = dict()
