@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
 	if "-h" in args or "--help" in args or unallowed_arg:
 		print('''
-        Usage: python3 erpnext-info.py [OPTIONS] ERPNEXT_PATH
+        Usage: /path/to/bench/env/bin/python3 erpnext-info.py [OPTIONS] /path/to/bench
             -j, --json: Outputs json in cli.
             -h, --help: This usage screen.
         '''.strip())
