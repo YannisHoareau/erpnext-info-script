@@ -1,9 +1,9 @@
 import sys
 
 ALLOWED_ARGS = ["-h", "--help", "-j", "--json"]
-res_array = dict()
 
 def create_info_dict(site_list, app_list):
+	res = dict()
 	res_sites = dict()
 	res_apps = dict()
 
@@ -20,8 +20,9 @@ def create_info_dict(site_list, app_list):
 			"app_version": frappe.get_module(app).__version__ or "UNVERSIONED"
 		}
 
-	res_array["sites"] = res_sites
-	res_array["apps"] = res_apps
+	res["sites"] = res_sites
+	res["apps"] = res_apps
+	return res
 
 if __name__ == '__main__':
 	argv = sys.argv[1:]
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 	sites_path = os.path.join(bench_path, "sites")
 	os.chdir(sites_path)
 
-	create_info_dict(get_sites(), get_all_apps(with_internal_apps=False, sites_path=sites_path))
+	res_array = create_info_dict(get_sites(), get_all_apps(with_internal_apps=False, sites_path=sites_path))
 
 	if print_json:
 		import json
@@ -67,10 +68,10 @@ if __name__ == '__main__':
 
 	os.chdir(old_cwd)
 	exit()
-elif __name__ == 'erpnext_info':
+else:
 	try:
 		import frappe
+		from frappe import cint
+		from frappe.utils import get_url
 	except ImportError:
 		exit(1)
-	global sites, apps
-	create_info_dict(sites, apps)
